@@ -27,7 +27,8 @@ case $1 in
 		_TWO=$(cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor)
 		_THREE=$(cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor)
 		echo "CPU0: $_ZERO";echo "CPU1: $_ONE";echo "CPU2: $_TWO"
-		echo -e "CPU3: $_THREE\\n";;
+		echo "CPU3: $_THREE";echo -e "\\nUsage:";uptime -p|sed "s/up //";uptime -s
+		echo;;
 	-g|--governor)
 	#set governor to all cores
 		case $2 in
