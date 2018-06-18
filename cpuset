@@ -1,15 +1,26 @@
 #!/bin/bash
 set -e
-
+shopt -u nocasematch
+#installs dependencies required to use cpuset if not installed
 if [ ! -e /usr/bin/cpupower ]; then
 	sudo pacman -S cpupower
 fi
-#if [ ! -e /usr/bin/cpuset ]; then
-#	sudo cp cpuset /usr/bin/
-#fi
+#installs cpuset on first execution
+if [ ! -e /usr/bin/cpuset ]; then
+	read -rp "cpuset is not installed, install ? Y/n > " INSTALL
+	case $INSTALL in
+		y|yes)
+			sudo cp -v cpuset /usr/bin/
+			echo "Done!"
+			echo "executing...";sleep 1;;
+		n|no)
+			exit 0;;
+	esac
+fi
 TMP=~/.CPUSET
 case $1 in
 	"")
+	#called when no argument is passed to the cpuset command
 		echo -e "\\nCurrent governors:"
 		_ZERO=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
 		_ONE=$(cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor)
@@ -18,10 +29,12 @@ case $1 in
 		echo "CPU0: $_ZERO";echo "CPU1: $_ONE";echo "CPU2: $_TWO"
 		echo -e "CPU3: $_THREE\\n";;
 	-g|--governor)
+	#set governor to all cores
 		case $2 in
 			"")
 				echo "error: no governor specified (use -h for help)"
 				;;
+			#governors
 			performance|powersave|ondemand|conservative|schedutil)
 				sudo cpupower frequency-set -g "$2"
 				echo;cpuset;;
@@ -29,6 +42,7 @@ case $1 in
 				echo "error: incorrect governor: $2";;
 		esac;;
 	-c|--core)
+	#set governor to a particular core
 		_CORE() {
 			sudo cpupower -c "$_CORE" frequency-set -g "$_GOV"
 		}
@@ -105,9 +119,24 @@ case $1 in
 #		fi
 #		rm "$TMP";;
 	-w|--watch)
-		#monitor cpu speed in real time
+	#monitor cpu speed in real time
 		watch -n 0.5 grep \"cpu MHz\" /proc/cpuinfo;;
+	-u|--uninstall)
+	#uninstall
+		read -rp "uninstall cpuset? Y/n > " UNINSTALL
+		case $UNINSTALL in
+			y|yes)
+				if [ -e /usr/bin/cpuset ]; then
+					sudo rm /usr/bin/cpuset
+					echo "Done!"
+				else
+					echo "cpuset is not installed"
+				fi;;
+			n|no)
+				exit 0;;
+		esac;;
 	-h|--help)
+	#show help
 		echo -e "\\nusage:  cpuset {operation} [options]"
 		echo "operations:"
 		echo "  cpuset                     >  show current governor"
@@ -120,5 +149,6 @@ case $1 in
 		echo -e "  cpuset {-h, --help}        >  show help\\n"
 		;;
 	*)
+	#called when an invalid argument is passed
 		echo "error: invalid argument: $1    (use -h for help)";;
 esac
