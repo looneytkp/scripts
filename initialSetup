@@ -7,8 +7,8 @@ ZSH() {
 		sudo pacman -S zsh powerline-fonts
 		export ZSH="$HOME/.oh-my-zsh"
 		sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-		themes="peepcode suvash amuse steeef smt mira kiwi itchy pure mortalscumbag candy-kingdom intheloop trapd00r refined frisk tjkirch crcandy fino-time bureau dst frontcube re5et dstufft blinks ysx juanghurtado pmcgee rgm emotty avit 3den adben rixius junkfood"
-		set -- "$@"
+		themes="peepcode suvash amuse steeef smt mira kiwi itchy pure mortalscumbag candy-kingdom intheloop trapd00r refined frisk tjkirch crcandy fino-time bureau dst frontcube re5et dstufft blinks ysx juanghurtado pmcgee rgm emotty avit 3den adben rixius junkfood josh"
+		set -- "$themes"
 		for a in $themes
 		do
 			if [[ -e ~/.oh-my-zsh/custom/themes/"$a.zsh-theme" ]]; then
