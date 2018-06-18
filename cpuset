@@ -8,14 +8,31 @@ fi
 #installs cpuset on first execution
 if [ ! -e /usr/bin/cpuset ]; then
 	read -rp "cpuset is not installed, install ? Y/n > " INSTALL
-	case $INSTALL in
+	case "$INSTALL" in
 		y|yes)
 			sudo cp -v cpuset /usr/bin/
-			echo "Done!"
+			echo "done!"
 			echo "executing...";sleep 1;;
 		n|no)
 			exit 0;;
 	esac
+else
+	#checks if changes have been made to cpuset
+	if [ -e cpuset ]; then
+		A=$(md5sum cpuset|sed "s/  c.*//")
+		B=$(md5sum /usr/bin/cpuset|sed "s/  \/.*//")
+		if [ "$A" != "$B" ]; then
+			read -rp "changes have been made to cpuset, update it ? Y/n > " UPDATE
+			case "$UPDATE" in
+				y|yes)
+					sudo cp -v cpuset /usr/bin/
+					echo "done!"
+					echo "executing...";sleep 1;;
+				n|no)
+					exit 0;;
+			esac
+		fi
+	fi
 fi
 TMP=~/.CPUSET
 case $1 in
@@ -129,7 +146,7 @@ case $1 in
 			y|yes)
 				if [ -e /usr/bin/cpuset ]; then
 					sudo rm /usr/bin/cpuset
-					echo "Done!"
+					echo "done!"
 				else
 					echo "cpuset is not installed"
 				fi;;
