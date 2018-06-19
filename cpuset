@@ -55,7 +55,7 @@ case $1 in
 			#governors
 			performance|powersave|ondemand|conservative|schedutil)
 				sudo cpupower frequency-set -g "$2"
-				echo;cpuset;;
+				cpuset;;
 			*)
 				echo "error: incorrect governor: $2";;
 		esac;;
