@@ -66,26 +66,14 @@ GIT() {
 ###swap
 SWAP() {
 	cd ~
-	swap=~/swap.img
-	if [[ ! -e $swap ]]; then
-		touch $swap
-		read -p "Swap size: " size
-		if [[ $size -ge 3072 ]]; then
-			#If you want to make 3Gb file then change count value to count=3M
-			dd if=/dev/zero of=$swap bs=$size count=3M
-		else
-			#If you want to make 2.9Gb or less file then change count value to count=1M
-			dd if=/dev/zero of=$swap bs=$size count=1M
-		fi
-		chmod 0600 $swap
-		sudo mkswap $swap
-		sudo echo "$swap swap swap sw 0 0" > tmp
-		xclip -sel clip < tmp
-		sudo swapon $swap
-	else
-		echo "swap exists"
-	fi
-	cat /proc/swaps
+	swap=/swapfile
+	
+	# sudo fallocate -l 4G /swapfile
+	# sudo chmod 600 /swapfile
+	# sudo mkswap /swapfile
+	#Add the following line to your /etc/fstab
+	#echo "/swapfile none swap defaults 0 0"|sudo tee -a /etc/fstab 
+	#swapon /swapfile
 }
 
 ###cursors

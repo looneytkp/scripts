@@ -5,12 +5,41 @@ shopt -u nocasematch
 if [ ! -e /usr/bin/cpupower ]; then
 	sudo pacman -S cpupower
 fi
+_write() {
+	shell=$(echo $SHELL)
+	if [[ $shell == "/usr/bin/bash" ]]; then
+		if grep -q "cpuset" ~/.bashrc; then
+			echo >> /dev/null
+		else
+			{	
+				alias powersave="cpuset -g powersave"
+				alias conservative="cpuset -g conservative"
+				alias ondemand="cpuset -g ondemand"
+				alias performance="cpuset -g performance"
+				alias schedutil="cpuset -g schedutil"
+			} >> ~/.bashrc; source ~/.bashrc
+		fi
+	elif [[ $shell == "/usr/bin/zsh" ]]; then
+		if grep -q "cpuset" ~/.zshrc; then
+			echo >> /dev/null
+		else
+			{
+				alias powersave="cpuset -g powersave"
+				alias conservative="cpuset -g conservative"
+				alias ondemand="cpuset -g ondemand"
+				alias performance="cpuset -g performance"
+				alias schedutil="cpuset -g schedutil"
+			} >> ~/.zshrc; source ~/.zshrc
+		fi
+	fi
+}
 #installs cpuset on first execution
 if [ ! -e /usr/bin/cpuset ]; then
 	read -rp "cpuset is not installed, install ? Y/n > " INSTALL
 	case "$INSTALL" in
 		y|yes)
 			sudo cp -v cpuset /usr/bin/
+			_write
 			echo "done!"
 			echo "executing...";sleep 1;;
 		n|no)
@@ -26,6 +55,7 @@ else
 			case "$UPDATE" in
 				y|yes)
 					sudo cp -v cpuset /usr/bin/
+					_write
 					echo "done!"
 					echo "executing...";sleep 1;;
 				n|no)
@@ -165,6 +195,8 @@ case $1 in
 #    	echo "  cpuset {--max-freq}        >  set maximum frequency"
     	echo "  cpuset {-w, --watch}       >  monitor cpu frequency changes"
 		echo -e "  cpuset {-h, --help}        >  show help\\n"
+		echo "aliases have been created in the rc file. to activate a governor, execute:"
+		echo -e "performance, powersave, ondemand, conservative or schedutil to switch governor.\\n"
 		;;
 	*)
 	#called when an invalid argument is passed
