@@ -6,7 +6,7 @@ if [ ! -e /usr/bin/cpupower ]; then
 	sudo pacman -S cpupower
 fi
 _write() {
-	shell=$(echo $SHELL)
+	shell=$(echo "$SHELL")
 	if [[ $shell == "/usr/bin/bash" ]]; then
 		if grep -q "cpuset" ~/.bashrc; then
 			echo >> /dev/null
@@ -49,7 +49,7 @@ else
 	#checks if changes have been made to cpuset
 	if [ -e cpuset ]; then
 		A=$(md5sum cpuset|sed "s/  c.*//")
-		B=$(md5sum /usr/bin/cpuset|sed "s/  \/.*//")
+		B=$(md5sum /usr/bin/cpuset|sed "s/  \\/.*//")
 		if [ "$A" != "$B" ]; then
 			read -rp "changes have been made to cpuset, update it ? Y/n > " UPDATE
 			case "$UPDATE" in

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -xe
+
+if [[ -e ~/.oh-my-zsh ]]; then
+	cd ~/.oh-my-zsh/themes
+	themes="peepcode suvash amuse steeef smt mira kiwi itchy pure mortalscumbag candy-kingdom intheloop trapd00r refined frisk tjkirch crcandy fino-time bureau dst frontcube re5et dstufft blinks ysx juanghurtado pmcgee rgm emotty avit 3den adben rixius junkfood josh fox"
+	set -- "$themes"
+	for a in "$themes"
+	do
+		if [[ -e "$a.zsh-theme" ]]; then
+			#rm "$a.zsh-theme"
+			echo "$a.zsh-theme"
+		fi
+	done
+fi
