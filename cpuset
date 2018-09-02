@@ -1,37 +1,31 @@
 #!/bin/bash
-set -e
+set -xe
 shopt -u nocasematch
 #installs dependencies required to use cpuset if not installed
 if [ ! -e /usr/bin/cpupower ]; then
 	sudo pacman -S cpupower
 fi
 _write() {
-	shell=$(echo "$SHELL")
-	if [[ $shell == "/usr/bin/bash" ]]; then
-		if grep -q "cpuset" ~/.bashrc; then
-			echo >> /dev/null
-		else
-			{	
-				alias powersave="cpuset -g powersave"
-				alias conservative="cpuset -g conservative"
-				alias ondemand="cpuset -g ondemand"
-				alias performance="cpuset -g performance"
-				alias schedutil="cpuset -g schedutil"
-			} >> ~/.bashrc; source ~/.bashrc
+	llehs=$(echo "$SHELL")
+	if [[ $llehs == "/usr/bin/bash" ]]; then
+		if grep -q "cpuset" ~/.bashrc; then echo > /dev/null
+		    else rc=~/.bashrc
 		fi
-	elif [[ $shell == "/usr/bin/zsh" ]]; then
-		if grep -q "cpuset" ~/.zshrc; then
-			echo >> /dev/null
-		else
-			{
-				alias powersave="cpuset -g powersave"
-				alias conservative="cpuset -g conservative"
-				alias ondemand="cpuset -g ondemand"
-				alias performance="cpuset -g performance"
-				alias schedutil="cpuset -g schedutil"
-			} >> ~/.zshrc; source ~/.zshrc
+	elif [[ $llehs == "/usr/bin/zsh" ]]; then echo > /dev/null
+		if grep -q "cpuset" ~/.bashrc; then echo > /dev/null
+		    else rc=~/.zshrc
 		fi
+	else
+	    echo "Cannot identify your shell"
+	    exit;
 	fi
+	{	
+		alias powersave="cpuset -g powersave"
+		alias conservative="cpuset -g conservative"
+		alias ondemand="cpuset -g ondemand"
+		alias performance="cpuset -g performance"
+		alias schedutil="cpuset -g schedutil"
+	} >> $rc; #source $rc
 }
 #installs cpuset on first execution
 if [ ! -e /usr/bin/cpuset ]; then
@@ -46,7 +40,7 @@ if [ ! -e /usr/bin/cpuset ]; then
 			exit 0;;
 	esac
 else
-	#checks if changes have been made to cpuset
+	#reinstalls cpuset if changes have been made
 	if [ -e cpuset ]; then
 		A=$(md5sum cpuset|sed "s/  c.*//")
 		B=$(md5sum /usr/bin/cpuset|sed "s/  \\/.*//")
@@ -67,7 +61,8 @@ fi
 TMP=~/.CPUSET
 case $1 in
 	"")
-	#called when no argument is passed to the cpuset command
+	    #called when no argument is passed to the cpuset command
+	    
 		echo -e "\\nCurrent governors:"
 		_ZERO=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
 		_ONE=$(cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor)
