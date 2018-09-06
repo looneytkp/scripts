@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xe
+set -e
 shopt -u nocasematch
 #installs dependencies required to use cpuset if not installed
 if [ ! -e /usr/bin/cpupower ]; then
@@ -7,34 +7,55 @@ if [ ! -e /usr/bin/cpupower ]; then
 fi
 _write() {
 	llehs=$(echo "$SHELL")
-	if [[ $llehs == "/usr/bin/bash" ]]; then
-		if grep -q "cpuset" ~/.bashrc; then echo > /dev/null
-		    else rc=~/.bashrc
+	if [[ $llehs == "/bin/bash" ]]; then
+		if grep -q "cpuset" ~/.bashrc; then return
+		else rc=~/.bashrc
 		fi
-	elif [[ $llehs == "/usr/bin/zsh" ]]; then echo > /dev/null
-		if grep -q "cpuset" ~/.bashrc; then echo > /dev/null
-		    else rc=~/.zshrc
+	elif [[ $llehs == "/bin/zsh" ]]; then
+		if grep -q "cpuset" ~/.bashrc; then return
+		else rc=~/.zshrc
 		fi
 	else
 	    echo "Cannot identify your shell"
 	    exit;
 	fi
-	{	
-		alias powersave="cpuset -g powersave"
-		alias conservative="cpuset -g conservative"
-		alias ondemand="cpuset -g ondemand"
-		alias performance="cpuset -g performance"
-		alias schedutil="cpuset -g schedutil"
-	} >> $rc; #source $rc
+	{
+		echo
+		echo 'alias powersave="cpuset -g powersave"'
+		echo 'alias conservative="cpuset -g conservative"'
+		echo 'alias ondemand="cpuset -g ondemand"'
+		echo 'alias performance="cpuset -g performance"'
+		echo 'alias schedutil="cpuset -g schedutil"'
+		echo
+	} >> $rc
 }
+
+_remove() {
+	llehs=$(echo "$SHELL")
+	if [[ $llehs == "/bin/bash" ]]; then
+		rc=~/.bashrc
+	else
+		rc=~/.zshrc
+	fi
+	counter=$(grep -qn "powersave" "$rc"|sed "s/:alias po.*//")
+	counter=$counter
+	while true; do
+		if grep -q "cpuset" "$rc"; then
+			sed "\"$counter\"d" "$rc"
+			counter=$((counter+1))
+		else
+			return
+		fi;
+	done
+}
+
 #installs cpuset on first execution
 if [ ! -e /usr/bin/cpuset ]; then
 	read -rp "cpuset is not installed, install ? Y/n > " INSTALL
 	case "$INSTALL" in
 		y|yes)
-			sudo cp -v cpuset /usr/bin/
 			_write
-			echo "done!"
+			sudo cp -v cpuset /usr/bin/
 			echo "executing...";sleep 1;;
 		n|no)
 			exit 0;;
@@ -48,9 +69,8 @@ else
 			read -rp "changes have been made to cpuset, update it ? Y/n > " UPDATE
 			case "$UPDATE" in
 				y|yes)
-					sudo cp -v cpuset /usr/bin/
 					_write
-					echo "done!"
+					sudo cp -v cpuset /usr/bin/
 					echo "executing...";sleep 1;;
 				n|no)
 					exit 0;;
@@ -69,7 +89,8 @@ case $1 in
 		_TWO=$(cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor)
 		_THREE=$(cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor)
 		echo "CPU0: $_ZERO";echo "CPU1: $_ONE";echo "CPU2: $_TWO"
-		echo "CPU3: $_THREE";echo -e "\\nUsage:";uptime -p|sed "s/up //";uptime -s
+		echo "CPU3: $_THREE";printf "\\nUsage: ";uptime -p|sed "s/up //"
+		upower -i $(upower -e | grep BAT) | grep --color=never -E "state|to\ full|to\ empty|percentage"|sed -e "s/.*state:               /State: /" -e "s/.*percentage:          /Percentage: /" -e "s/.*time to empty:       /Time to empty: /" -e "s/.*time to full:        /Time to full: /"
 		echo;;
 	-g|--governor)
 	#set governor to all cores
@@ -182,14 +203,15 @@ case $1 in
 	#show help
 		echo -e "\\nusage:  cpuset {operation} [options]"
 		echo "operations:"
-		echo "  cpuset                     >  show current governor"
-    	echo "  cpuset {-g, --governor}    >  set governor to all cores"
-    	echo "  cpuset {-c, --core}        >  set governor to a specific core"
-#    	echo "  cpuset {-s, --set}         >  set a specific frequency clock"
+		echo "  cpuset                     >  show current governor."
+    echo "  cpuset {-h, --help}        >  show help."
+    echo "  cpuset {-g, --governor}    >  set governor to all cores."
+    echo "  cpuset {-c, --core}        >  set governor to a specific core."
+#   echo "  cpuset {-s, --set}         >  set a specific frequency clock"
 #		echo "  cpuset {--min-freq}        >  set minimum frequency"
-#    	echo "  cpuset {--max-freq}        >  set maximum frequency"
-    	echo "  cpuset {-w, --watch}       >  monitor cpu frequency changes"
-		echo -e "  cpuset {-h, --help}        >  show help\\n"
+#   echo "  cpuset {--max-freq}        >  set maximum frequency"
+    echo "  cpuset {-w, --watch}       >  monitor cpu frequency changes."
+		echo -e "  cpuset {-u, --uninstall}   >  uninstall cpuset.\\n"
 		echo "aliases have been created in the rc file. to activate a governor, execute:"
 		echo -e "performance, powersave, ondemand, conservative or schedutil to switch governor.\\n"
 		;;
