@@ -111,7 +111,7 @@ case $1 in
 
 	-l|--list)
 		_check
-		echo -e "\\nGovernors:\\n  performance\\n  powersave\\n  ondemand\\n  conservative\\n  schedutil\\n";;
+		echo -e "\\nGovernors:\\n  conservative\\n  ondemand\\n  performance\\n  powersave\\n  schedutil\\n";;
 
 	-h|--help)
 	#show help
