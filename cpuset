@@ -82,12 +82,11 @@ TMP=~/.CPUSET
 case $1 in
 	"")
 	    #called when no argument is passed to the cpuset command
-	    
-		echo -e "\\nCurrent governors:"
-		_ZERO=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
+	  _ZERO=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)
 		_ONE=$(cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor)
 		_TWO=$(cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor)
 		_THREE=$(cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor)
+		echo -e "\\nCurrent governors:"
 		echo "CPU0: $_ZERO";echo "CPU1: $_ONE";echo "CPU2: $_TWO"
 		echo "CPU3: $_THREE";printf "\\nUsage: ";uptime -p|sed "s/up //"
 		upower -i $(upower -e | grep BAT) | grep --color=never -E "state|to\ full|to\ empty|percentage"|sed -e "s/.*state:               /State: /" -e "s/.*percentage:          /Percentage: /" -e "s/.*time to empty:       /Time to empty: /" -e "s/.*time to full:        /Time to full: /"
