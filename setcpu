@@ -13,8 +13,7 @@ CPU=$DIR/cpu
 #write function, called on first execution
 _write() {
 	ls /sys/devices/system/cpu/ | grep "cpu[0-9]" > $CPU
-	if grep -q "setcpu" $FILE; then
-		return
+	if grep -q "setcpu" $FILE; then return
 	else
 		{
 			echo 'alias powersave="setcpu -g powersave"'
@@ -26,11 +25,10 @@ _write() {
 	fi
 	LLEHS=$(echo $SHELL|grep -oE "zsh|bash")
 	if [ $LLEHS == bash ]; then
-		echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.bashrc
-		source ~/.bashrc
+		echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.bashrc; bash; source ~/.bashrc; exit
 	elif [ $LLEHS == zsh ]; then
-		echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.zshrc
-		source ~/.zshrc
+        echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.zshrc
+		zsh; source ~/.zshrc; exit
 	fi
 }
 _check() {
