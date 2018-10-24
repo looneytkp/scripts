@@ -1,9 +1,0 @@
-android-tools
-git
-zsh
-youtube-dl
-
-
-chsh -s $(which zsh)
-gnome-session-quit
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

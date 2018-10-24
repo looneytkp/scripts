@@ -1,0 +1,19 @@
+#!/bin/bash
+
+curl -H "Authorization: bearer e96f8d03cd1192d7b45225816c1cfbcb4c8ee495" -X POST -d " \
+ { \
+   \"query\": \"query { viewer { login 
+   
+   
+   }}\" \
+ } \
+" https://api.github.com/graphql
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8AxhQjdDtVNAZOjrUtAf6oXZ0u57uVcOw9Tjp4igAhHaMw6uW63DadHq6/3ucP8ZpZuxwsCIcX5N8GUlTgO3oKgs7OHX3479LnEI2tE0chrXXGqMJ7LFXRoYqYQZcWYvWUUIAvM2o18RuSuwiw6nN6yefwFACC1ikSR63XfuAiOwXie7tRQ0/RlFHilns3uNfqOhH0c0k0qOpaNcYWhQiL/DZJW+I/mV5ai21ZcO0fn2jEYZIklDaeAV6+JD08DXgDBljn8oEUL/cYI1b1hjXBUr+pZQvOHn2wx3VpOTZ/jucdEQRIBBBcdlrVfJfllUuqIr97OsJG7uvidXNYrumZqSej0wewUSupu4+zZDM8jpDoU4X3xTeShFTs4H5EiIYcQh+CGngQGvNqxpzu2XvQ5bPAMIQ7j9GqeTFmK/KtHjNzmCX6NQDYCaTyHLoyDJL46jRuVjyWlbHQHL3gUGfTUhP9005XBNiga3Kuc3H9ZQRn4dTuQcmH9pe+bpHB2tYmQEzSBkMiwS4d0jWrWBSeQ6DNNay2o1MoWkAxLvUhUA7XjYuPbxDWHcMigSnjbqG6BVQthYFQ5eQhJetw7HqL9a8wE7bz5CW67q9DqoFp4IBa1wRlZsEzdNORr4e6JcMOyTS/KnAth62dz+y6EYXKSppbUisaanGdjyt5YYUGw==
+
+
+#create
+curl -u "looneytkp:e96f8d03cd1192d7b45225816c1cfbcb4c8ee495" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -d '{"title": "arch", "key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8AxhQjdDtVNAZOjrUtAf6oXZ0u57uVcOw9Tjp4igAhHaMw6uW63DadHq6/3ucP8ZpZuxwsCIcX5N8GUlTgO3oKgs7OHX3479LnEI2tE0chrXXGqMJ7LFXRoYqYQZcWYvWUUIAvM2o18RuSuwiw6nN6yefwFACC1ikSR63XfuAiOwXie7tRQ0/RlFHilns3uNfqOhH0c0k0qOpaNcYWhQiL/DZJW+I/mV5ai21ZcO0fn2jEYZIklDaeAV6+JD08DXgDBljn8oEUL/cYI1b1hjXBUr+pZQvOHn2wx3VpOTZ/jucdEQRIBBBcdlrVfJfllUuqIr97OsJG7uvidXNYrumZqSej0wewUSupu4+zZDM8jpDoU4X3xTeShFTs4H5EiIYcQh+CGngQGvNqxpzu2XvQ5bPAMIQ7j9GqeTFmK/KtHjNzmCX6NQDYCaTyHLoyDJL46jRuVjyWlbHQHL3gUGfTUhP9005XBNiga3Kuc3H9ZQRn4dTuQcmH9pe+bpHB2tYmQEzSBkMiwS4d0jWrWBSeQ6DNNay2o1MoWkAxLvUhUA7XjYuPbxDWHcMigSnjbqG6BVQthYFQ5eQhJetw7HqL9a8wE7bz5CW67q9DqoFp4IBa1wRlZsEzdNORr4e6JcMOyTS/KnAth62dz+y6EYXKSppbUisaanGdjyt5YYUGw=="}' -X POST https://api.github.com/user/keys
+
+#delete
+curl -u "looneytkp:e96f8d03cd1192d7b45225816c1cfbcb4c8ee495" -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X DELETE https://api.github.com/user/keys/31195570

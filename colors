@@ -1,0 +1,23 @@
+#import os
+#colors = ['red', 'blue', 'green', 'black', 'brown', 'grey', 'purple', 'indigo', 'white']
+
+##length = len(colors)
+##newLength = length + 1
+##count = 0
+##while length == length:
+##    print(colors[count])
+##    count += 1
+
+#print(*colors, sep=" ")
+
+#import graphene
+
+class Query(graphene.ObjectType):
+  hello = graphene.String(name=graphene.String(default_value="World"))
+
+  def resolve_hello(self, info, name):
+    return 'Hello ' + name
+
+schema = graphene.Schema(query=Query)
+result = schema.execute('{ hello }')
+print(result.data['hello']) # "Hello World"
