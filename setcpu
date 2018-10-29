@@ -16,24 +16,19 @@ _write() {
 	if grep -q "setcpu" $FILE; then return
 	else
 		{
-			echo 'alias powersave="setcpu -g powersave"'
-			echo 'alias conservative="setcpu -g conservative"'
-			echo 'alias ondemand="setcpu -g ondemand"'
-			echo 'alias performance="setcpu -g performance"'
-			echo 'alias schedutil="setcpu -g schedutil"'
+			echo "alias powersave=\"setcpu -g powersave\"\\nalias conservative=\"setcpu -g conservative\"\\nalias ondemand=\"setcpu -g ondemand\"\\nalias performance=\"setcpu -g performance\"\\nalias schedutil=\"setcpu -g schedutil\""
 		} >> $FILE
 	fi
 	LLEHS=$(echo $SHELL|grep -oE "zsh|bash")
 	if [ $LLEHS == bash ]; then
-		echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.bashrc; bash; source ~/.bashrc; exit
+		echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.bashrc
 	elif [ $LLEHS == zsh ]; then
         echo "source $FILE;alias setcpu=\"bash $DIR/setcpu\"" >> ~/.zshrc
-		zsh; source ~/.zshrc; exit
 	fi
 }
 _check() {
 if [ ! -d $DIR ]; then
-	echo -e "setcpu is not installed\\nRun 'bash setcpu -i' to install."
+	echo -e "setcpu is not installed\\nRun 'bash setcpu install' to install."
 	exit
 fi
 }
@@ -57,15 +52,15 @@ case $1 in
 		upower -i $(upower -e | grep BAT) | grep --color=never -E "state|to\ full|to\ empty|percentage"|sed -e "s/.*state:               /State: /" -e "s/.*percentage:          /Percentage: /" -e "s/.*time to empty:       /Time to empty: /" -e "s/.*time to full:        /Time to full: /"
 		echo;;
 		
-	-i|--install)
+	install)
 		printf "Installing setcpu..."
-		if [ ! -d ~/.setcpu ]; then mkdir ~/.setcpu;fi
+		if [ ! -d $DIR ]; then mkdir $DIR;fi
 		touch $FILE; touch $CPU; _write
 		cp -u setcpu $DIR;sleep 1;
 		echo -e "done!";;
 
 #uninstall
-	-u|--uninstall)
+	uninstall)
 		_check
 		read -rp "uninstall setcpu? Y/n > " UNINSTALL
 		case $UNINSTALL in
@@ -95,7 +90,7 @@ case $1 in
 		esac;;
 		
 #set one governor for all cpu's
-	-g|--governor)
+	governor)
 		_check
 		case $2 in
 			"")
@@ -107,19 +102,19 @@ case $1 in
 				echo -e "error: incorrect governor: $2\\nRun 'setcpu -l' for list of governors.";;
 		esac;;
 
-	-l|--list)
+	list)
 		_check
 		echo -e "\\nGovernors:\\n  conservative\\n  ondemand\\n  performance\\n  powersave\\n  schedutil\\n";;
 
-	-h|--help)
+	help)
 	#show help
-		echo -e "\\nUsage:  setcpu {operation} [options]\\nOperations:\\n  setcpu                     >  show current governor.\\n  setcpu {-h, --help}        >  show help.\\n  setcpu {-g, --governor}    >  set governor to all cores.\\n  setcpu {-l, --list}        >  list governors."
+		echo -e "\\nUsage:  setcpu {operation} [options]\\nOperations:\\n  setcpu                     >  show current governor.\\n  setcpu {help}        >  show help.\\n  setcpu {governor}    >  set governor to all cores.\\n  setcpu {list}        >  list governors."
 #    echo "  setcpu {-c, --core}        >  set governor to a specific core."
 #   echo "  setcpu {-s, --set}         >  set a specific frequency clock"
 #		echo "  setcpu {--min-freq}        >  set minimum frequency"
 #   echo "  setcpu {--max-freq}        >  set maximum frequency"
 #    echo "  setcpu {-w, --watch}       >  monitor cpu frequency changes."
-		echo -e "  setcpu {-i, --install}     >  install setcpu\\n  setcpu {-u, --uninstall}   >  uninstall setcpu.\\n\\nShortcuts have been created, simply switch to desired governor by executing the name of governor.\\n"
+		echo -e "  setcpu {install}     >  install setcpu\\n  setcpu {uninstall}   >  uninstall setcpu.\\n\\nShortcuts have been created, simply switch to desired governor by executing the name of governor.\\n"
 		;;
 	*)
 	#called when an invalid argument is passed
