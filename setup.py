@@ -3,17 +3,15 @@ user = getpass.getuser();gitDIR = '/home/' + user + '/git'
 home = '/home/' + user;zshrc = home + '/.zshrc'
 gitssh = '/home/' + user + '/.ssh/id_rsa.pub'
 setup = '/home/' + user + '/.setup';cursors = home + '/.curs'
-name = ''; email = ''
-token = ''
 pacman = 'sudo pacman -Syy && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop gedit-code-assistance gedit-plugins shellcheck python-pip'
 
 #git
 def git():
     def createSSH():
-        sys('git config --global user.name ' + name + '; git config --global user.email ' + email + '; ssh-keygen -t rsa -b 4096 -C ' + email + '; $(ssh-agent -s); ssh-add ~/.ssh/id_rsa')
+        sys('wget -qc "https://www.dropbox.com/s/if7dy5qaxhk09ad/info.zip";name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");email=$(unzip -P $USER$USER -pq info.zip|grep "email"|sed "s/email=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");git config --global user.name $name; git config --global user.email $email; ssh-keygen -t rsa -b 4096 -C $email; $(ssh-agent -s); ssh-add ~/.ssh/id_rsa')
         with open(gitssh, 'r') as ssh:
             ssh = ssh.read().replace('\n', '')
-            sys('curl -s -u ' + name + ':' + token + ' -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -d \'{"title": "arch", "key": "' + ssh + '" }\' -X POST https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
+            sys('name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");curl -s -u $name:$token -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -d \'{"title": "arch", "key": "' + ssh + '" }\' -X POST https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
 
     if "git" in open(setup).read():
         print('git is already set up')
@@ -22,16 +20,16 @@ def git():
             mkdir(gitDIR);chdir(gitDIR)
         else:
             chdir(gitDIR)
-            sys('git init;curl -is -u "' + name + ':' + token + '" -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
-            if "Bad credentials" in open('.gitOUT.txt').read():
-                exit('Invalid token, update it.')
-            elif not "ssh-rsa" in open('.gitOUT.txt').read():
-                createSSH()
-            elif "ssh-rsa" in open('.gitOUT.txt').read():
-                sys('getID=$(grep -w "id" .gitOUT.txt|sed -e "s/.* //"|sed "s/,//"); curl -is -u ' + name + ':' + token + ' -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X DELETE https://api.github.com/user/keys/$getID -o .gitOUT.txt || echo "\nNo internet connection"')
-                createSSH()
-            sys('git clone git@github.com:looneytkp/Popcorn-Time.git; git clone git@github.com:looneytkp/scripts.git; git clone git@github.com:looneytkp/make-passwd.git')
-            remove(".gitOUT.txt"); chdir(home)
+        sys('name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");git init;curl -is -u "$name:$token" -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
+        if "Bad credentials" in open('.gitOUT.txt').read():
+            exit('Invalid token, update it.')
+        elif not "ssh-rsa" in open('.gitOUT.txt').read():
+            createSSH()
+        elif "ssh-rsa" in open('.gitOUT.txt').read():
+            sys('getID=$(grep -w "id" .gitOUT.txt|sed -e "s/.* //"|sed "s/,//");name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");curl -is -u $name:$token -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X DELETE https://api.github.com/user/keys/$getID -o .gitOUT.txt || echo "\nNo internet connection"')
+            createSSH()
+        sys('git clone git@github.com:looneytkp/Popcorn-Time.git; git clone git@github.com:looneytkp/scripts.git; git clone git@github.com:looneytkp/make-passwd.git')
+        remove(".gitOUT.txt","info.zip"); chdir(home)
         with open(setup, 'a') as txt:
             txt.write("git\n")
 
