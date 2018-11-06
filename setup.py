@@ -1,9 +1,10 @@
-from os import system as sys, path, mkdir, chdir, remove;import getpass
+from os import system as sys, path, mkdir, chdir, remove, devnull, sys as s
+import getpass
 user = getpass.getuser();gitDIR = '/home/' + user + '/git'
 home = '/home/' + user;zshrc = home + '/.zshrc'
 gitssh = '/home/' + user + '/.ssh/id_rsa.pub'
 setup = '/home/' + user + '/.setup';cursors = home + '/.curs'
-pacman = 'sudo pacman -Syy && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop gedit-code-assistance gedit-plugins shellcheck python-pip'
+pacman = 'sudo pacman -Syy && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop screenfetch gedit-code-assistance gedit-plugins shellcheck python-pip'
 
 #git
 def git():
@@ -18,8 +19,7 @@ def git():
     else:
         if not path.exists(gitDIR):
             mkdir(gitDIR);chdir(gitDIR)
-        else:
-            chdir(gitDIR)
+        chdir(gitDIR)
         sys('name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");git init;curl -is -u "$name:$token" -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
         if "Bad credentials" in open('.gitOUT.txt').read():
             exit('Invalid token, update it.')
@@ -32,13 +32,14 @@ def git():
         remove(".gitOUT.txt");remove('info.zip'); chdir(home)
         with open(setup, 'a') as txt:
             txt.write("git\n")
-        print('\ngit set up is complete\n')
+        print('\ngit set up complete\n')
 
 #popcorntime
 def popcorntime():
     if "popcorntime" in  open(setup).read():
-        return "popcorntime is already set up."
+        print("popcorntime is already set up.")
     else:
+        #null = open(devnull, 'w')
         sys("wget -qnc 'https://github.com/looneytkp/popcorntime/archive/master.zip' && unzip -oq ma*ip && yes|./Po*er/p*e && rm -rf ma*ip Po*er")
         with open(setup, 'a') as txt:
             txt.write("popcorntime\n")
@@ -46,7 +47,7 @@ def popcorntime():
 #zsh
 def zsh():
     if "zsh" in  open(setup).read():
-        return "zsh is already set up."
+        print("zsh is already set up.")
     else:
         sys('chsh -s $(which zsh); gnome-session-quit --no-prompt')
         with open(setup, 'a') as txt:
@@ -55,7 +56,7 @@ def zsh():
 #ohmyzsh
 def ohmyzsh():
     if "ohmyzsh" in  open(setup).read():
-        return "ohmyzsh is already set up."
+        print("ohmyzsh is already set up.")
     else:
         sys('sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"')
         themes = ['peepcode', 'suvash', 'amuse', 'steeef', 'smt', 'mira', 'kiwi', 'itchy', 'pure', 'mortalscumbag', 'candy-kingdom', 'intheloop', 'trapd00r', 'refined', 'frisk', 'tjkirch', 'crcandy', 'fino-time', 'bureau', 'dst', 'frontcube', 're5et', 'dstufft', 'blinks', 'ysx', 'juanghurtado', 'pmcgee', 'rgm', 'emotty', 'avit', '3den', 'adben', 'rixius', 'junkfood', 'josh', 'fox']
@@ -69,7 +70,7 @@ def ohmyzsh():
 
 def rc():
     if "rc" in  open(setup).read():
-        return "rc is already set up."
+        print("rc is already set up.")
     else:
         with open(zshrc, 'a') as rc:
             rc.write('DISABLE_UPDATE_PROMPT=true\nalias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"\nalias charge="sudo usbmuxd -u -U usbmux"')
@@ -79,7 +80,7 @@ def rc():
 
 def cursors():
     if "cursors" in  open(setup).read():
-        return "cursors is already set up."
+        print("cursors is already set up.")
     else:
         if not path.exists(cursors):
             mkdir(cursors)
@@ -93,4 +94,4 @@ def cursors():
 text = open(setup, 'a+')
 text.close()
 #sys(pacman)
-git()
+popcorntime()
