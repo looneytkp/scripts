@@ -4,7 +4,7 @@ user = getpass.getuser();gitDIR = '/home/' + user + '/git'
 home = '/home/' + user;zshrc = home + '/.zshrc'
 gitssh = '/home/' + user + '/.ssh/id_rsa.pub'
 setup = '/home/' + user + '/.setup';cursors = home + '/.curs'
-pacman = 'sudo pacman -Syy && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop screenfetch gedit-code-assistance gedit-plugins shellcheck python-pip'
+pacman = 'sudo pacman-mirrors --fasttrack 10 && sudo pacman -Syyu && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop screenfetch gedit-code-assistance gedit-plugins shellcheck python-pip'
 
 #git
 def git():
@@ -39,8 +39,7 @@ def popcorntime():
     if "popcorntime" in  open(setup).read():
         print("popcorntime is already set up.")
     else:
-        #null = open(devnull, 'w')
-        sys("wget -qnc 'https://github.com/looneytkp/popcorntime/archive/master.zip' && unzip -oq ma*ip && yes|./Po*er/p*e && rm -rf ma*ip Po*er")
+        sys("wget -qnc 'https://github.com/looneytkp/popcorntime/archive/master.zip' && unzip -oq ma*ip && ./Po*er/p*e && rm -rf ma*ip Po*er")
         with open(setup, 'a') as txt:
             txt.write("popcorntime\n")
 
@@ -94,4 +93,3 @@ def cursors():
 text = open(setup, 'a+')
 text.close()
 #sys(pacman)
-popcorntime()
