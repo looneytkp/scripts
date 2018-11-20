@@ -4,7 +4,7 @@ user = getpass.getuser();gitDIR = '/home/' + user + '/git'
 home = '/home/' + user;zshrc = home + '/.zshrc'
 gitssh = '/home/' + user + '/.ssh/id_rsa.pub'
 setup = '/home/' + user + '/.setup';cursors = home + '/.curs'
-pacman = 'sudo pacman-mirrors --fasttrack 10 && sudo pacman -Syyu && sudo pacman -S --needed git zsh powerline-fonts youtube-dl android-tools telegram-desktop screenfetch gedit-code-assistance gedit-plugins shellcheck python-pip'
+pacman = 'sudo pacman-mirrors --fasttrack 10 && sudo pacman -Syyu && sudo pacman -S --needed thermald git zsh powerline-fonts youtube-dl android-tools telegram-desktop screenfetch gedit-code-assistance gedit-plugins shellcheck python-pip'
 
 #git
 def git():
