@@ -92,4 +92,4 @@ def cursors():
 
 text = open(setup, 'a+')
 text.close()
-sys(pacman); git(); popcorntime(); rc()
+sys(pacman); git(); popcorntime()
