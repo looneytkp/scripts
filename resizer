@@ -1,0 +1,56 @@
+#!/bin/bash
+set -e
+
+cd ~/Downloads
+if [[ ! -d converted_imgs ]];then
+	mkdir converted_imgs
+fi
+func(){
+	file=~/Downloads/.tmp.txt
+	if [[ -e $file ]]; then rm $file;fi
+	find *.jpg *.png *.jpeg 2> /dev/null|grep -vE '(_c.jpg|_c.png|_c.jpeg)'|grep -n . > $file|| printf "\\rno images to convert\\n"
+	cnt=1
+	while true;do
+		if grep -q "$cnt:" $file; then
+			name=$(grep -w "$cnt:.*" $file|sed "s/"$cnt:"//")
+			proc=$(grep "$name" $file|grep -oE '(.jpg|.png|.jpeg)')
+			size=$(identify -verbose "$name" 2>> .logs|grep Geometry|sed -e 's/.*: //' -e 's/+.*//' -e 's/x//')
+			if [[ $proc == '.jpg' ]];then
+				old='.jpg';new='_c.jpg'
+			elif [[ $proc == '.png' ]]; then
+				old='.png';new='_c.png'
+			elif [[ $proc == '.jpeg' ]]; then
+				old='.jpeg';new='_c.jpeg'
+			fi
+			new_name=$(grep -w "$cnt:.*" $file|sed "s/"$cnt:"//"|sed "s/$old/$new/")
+			if [[ $size -lt 500741 ]]; then
+				echo "$name is less than 500x741" >> .logs
+			elif [[ $size -gt 500741 ]]; then
+				convert "$name" -resize 500x741! -quality 55 converted_imgs/"$new_name" 2>> .logs
+				mv "$name" ~/.local/share/Trash/files
+			elif [[ $size == 500741 ]]; then
+				convert "$name" -quality 55 converted_imgs/"$new_name" 2>> .logs
+				mv "$name" ~/.local/share/Trash/files
+			fi
+			cnt=$((cnt+1))
+		else
+			break
+		fi
+	done
+	rm $file
+}
+func &
+pid=$!
+spin='-\|/'
+i=0
+while kill -0 $pid 2>/dev/null
+do
+  i=$(( (i+1) %4 ))
+  printf "\\r${spin:$i:1} converting..."
+  sleep .1
+done
+if [ -e .logs ]; then
+	echo -e "\\nerrors:"
+	cat .logs|grep -n .|sed 's/:/: /'
+	rm .logs
+fi
