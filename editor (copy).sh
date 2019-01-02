@@ -122,8 +122,6 @@ sort(){
 	add(){
 		read -rp "$pixel: " url
 		if [[ "$url" == '' ]]; then
-			if grep -oE "$srt" .out|head -1; then cat .out >> "$_dir/$srt";fi
-			echo > .out
 			return
 		else
 			url=$url
@@ -133,11 +131,11 @@ sort(){
 		add
 	}
 	a=0;b=1
-	echo; touch .out
+	echo
 #	echo '[vc_row][vc_column column_width_percent="100" align_horizontal="align_center" overlay_alpha="50" gutter_size="3" medium_width="0" mobile_width="0" shift_x="0" shift_y="0" shift_y_down="0" z_index="0" width="1/1"][vc_column_text]' > .out
 	while true;do
 		if [ $a != 1 ]; then
-			if [ $b -ge 10 ]; then srt="$b";else srt="0$b";fi
+			if [ $b -ge 10 ]; then srt="$b";else srt="$b";fi
 			read -rp "sort s$srt: " url
 			size=$(wc -l<.out)
 			if [ "$url" == '' ]; then
@@ -162,8 +160,7 @@ sort(){
 			else
 				header=y;func='header';add_on
 				func='proc';add_on;rm .ct
-				if grep -oE "$srt" .out|head -1; then cat .out >> "$_dir/$srt";fi
-				echo > .out
+				
 			fi
 			b=$((b+1))
 		else
