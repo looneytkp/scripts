@@ -225,7 +225,7 @@ sort(){
 		fi
 		if [ $a != 1 ]; then
 			if [ $n -lt 1 ]; then
-				rand;read -rp "sort s$srt: " -a url
+				rand;read -rp "sort s$srt: " url
 			elif [ $n -ge 1 ] && [ $esc == no ]; then
 				url=$position
 			elif [ $n -ge 1 ] && [ $esc == yes ]; then
@@ -275,7 +275,6 @@ sort(){
 					echo ":: not yet functional.";b=$((b-0));;
 				exit|e) abort;;
 				*)
-					for url in "${url[@]}";do
 					lru=$(echo "$url"|grep "http"|| echo false)
 					if [ $lru == false ]; then
 						echo "error: $url: not a URL or flag.";b=$((b+0))
@@ -289,8 +288,7 @@ sort(){
 							echo "error: s$srt links not found.";b=$((b-0))
 						fi
 						b=$((b+1))
-					fi
-					done;;
+					fi;;
 			esac
 		else
 			break
@@ -317,6 +315,7 @@ case $1 in
 	-s|--sort)
 		if [ "$2" != '' ]; then
 			esc=no;nd2="$2";n=$#;n=$((n-1))
+			echo "you found the easter egg :)"
 			echo -e "\\n:: auto sorting $n URLs"
 			for position;do
 				if [ "$position" == -s ]||[ "$position" == '--sort' ]; then
