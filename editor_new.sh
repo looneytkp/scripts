@@ -1,9 +1,9 @@
 #!/bin/bash
-#v3.8.4
+#v3.8.1
 #looneytkp
 cleanup(){
 	if [ -e .out ]; then rm .out*; fi
-	if [ -e .ct ]; then rm .ct*;fi
+	if [ -e .ct ]; then rm .ct*; fi
 	if [ -e .wget ]; then rm .wget; fi
 	if [ -d $_dir ]; then rm -rf $_dir; fi
 }
@@ -13,18 +13,12 @@ sig_abort(){
 	exit 0
 }
 abort(){
-	#cleanup
+	cleanup
 	if [ "$nd2" != '' ]; then
-		if [ $size -ge 1 ]; then
-			echo -e ":: faulty: $url.\\n"
+		if [ $size -ge 0 ]; then
+			echo -e ":: failed.\\n"
 		else
-			if [ ! -e $out ]; then
-				truncate -s 0 $out;size=$(wc -l<$out)
-				echo -e ":: faulty: $url.\\n"
-			else
-				xclip -sel clip < $out
-				echo -e ":: copied to clipboard.\\n"
-			fi
+			echo -e ":: copied to clipboard.\\n"
 		fi
 	else
 		echo -e "aborted.\\n"
@@ -38,74 +32,70 @@ connect(){
 	fi
 }
 parser(){
-if [ "$cur" == fl ]; then ct=$file;fi
+
+ct=$file
+
+
 f=(480p 720p 1080p)
 			for f in "${f[@]}"; do
-				if grep -qioE ".*$f.*</a>" $ct; then
-					grep -iwE ".*$f.*" $ct|
-					if grep -qE ".*$f.*(x264|x265).*";then
-						grep -iwE ".*$f.*" $ct > $ct3
-						grep -vE ".*$f.*(x264|x265).*" $ct3 > $ct2||
-						size=$(wc -l<$ct2)
+				if grep -qioE ".*$f.*</a>" .ct; then
+					grep -iwE ".*$f.*" .ct|
+					if grep -qE "(x264|x265)";then
+						grep -iwE ".*$f.*" .ct > .ct3
+						grep -vE "(x264|x265)" .ct3 > .ct2||
+						size=$(wc -l<.ct2)
 						if [ $size -le 1 ]; then
-							if [ "$cur" == fl ]; then
-								echo -e "\\n$f" >> $out
-								grep -iwE ".*$f.*" $ct2|sed 's:.*<a:<a:'|
-								grep -iowE ".*$f.*</a>" >> $out
-							else
-								rm $ct3 $ct2
-							fi
+							rm .ct3 .ct2
 						else
-							echo -e "\\n$f" >> $out
-							grep -iwE ".*$f.*" $ct2|sed 's:.*<a:<a:'|
-							grep -iowE ".*$f.*</a>" >> $out
-							if [ -e $ct3 ]; then rm $ct3;fi
+							echo -e "\\n$f" >> .out
+							grep -iwE ".*$f.*" .ct2|sed 's:.*<a:<a:'|
+							grep -iowE ".*$f.*</a>" >> .out
+							if [ -e .ct3 ]; then rm .ct3;fi
 						fi
 					else
-						echo -e "\\n$f" >> $out
-						grep -iwE ".*$f.*" $ct > $ct2
-						grep -iwE "$format" $ct2|sed 's:.*<a:<a:'|
-						grep -iowE ".*$f.*</a>" >> $out
+						echo -e "\\n$f" >> .out
+						grep -iwE ".*$f.*" .ct > .ct2
+						grep -iwE "$format" .ct2|sed 's:.*<a:<a:'|
+						grep -iowE ".*$f.*</a>" >> .out
 					fi
-					if grep -qioE ".*$f.*x264.*</a>" $ct; then
-						echo -e "\\n$f x264" >> $out
-						grep -iwE ".*($f|x264).*" $ct > $ct2
-						grep -iwE "$format" $ct2|sed 's:.*<a:<a:'|
-						grep -iowE '.*x264.*</a>' >> $out
+					if grep -qioE ".*$f.*x264.*</a>" .ct; then
+						echo -e "\\n$f x264" >> .out
+						grep -iwE ".*($f|x264).*" .ct > .ct2
+						grep -iwE "$format" .ct2|sed 's:.*<a:<a:'|
+						grep -iowE '.*x264.*</a>' >> .out
 					fi
-					if grep -qioE ".*$f.*x265.*</a>" $ct; then
-						echo -e "\\n$f x265" >> $out
-						grep -iwE ".*($f|x265).*" $ct > $ct2
-						grep -iwE "$format" $ct2|sed 's:.*<a:<a:'|
-						grep -iowE '.*x265.*</a>' >> $out
+					if grep -qioE ".*$f.*x265.*</a>" .ct; then
+						echo -e "\\n$f x265" >> .out
+						grep -iwE ".*($f|x265).*" .ct > .ct2
+						grep -iwE "$format" .ct2|sed 's:.*<a:<a:'|
+						grep -iowE '.*x265.*</a>' >> .out
 					fi
 				fi
 			done
-			if [ "$cur" != fl ]; then if [ -e $ct3 ]; then rm $ct2 $ct3;fi;fi
 }
 add_on(){
 	if [ "$func" == 'header' ]; then
-		wget -k "$url" -o .wget -O $ct||connect
-		if grep -iqE '.*(&amp|&darr).*' $ct; then
-			grep -vE '.*(amp|darr).*' $ct > $ct2;mv $ct2 $ct
+		wget -k "$url" -o .wget -O .ct||connect
+		if grep -iqE '.*(&amp|&darr).*' .ct; then
+			grep -vE '.*(amp|darr).*' .ct > .ct2;mv .ct2 .ct
 		fi
-		if grep -qioE ".*trailer.*</a>" $ct; then
-			echo 'Trailer' >> $out
-			grep -iwE ".*trailer.*</a>" $ct|sed 's:.*<a:<a:';echo >> $out
+		if grep -qioE ".*trailer.*</a>" .ct; then
+			echo 'Trailer' >> .out
+			grep -iwE ".*trailer.*</a>" .ct|sed 's:.*<a:<a:';echo >> .out
 		fi
 		hh=$(echo $header)
 		if [ "$hh" == y ]; then
 			{
-				if grep -qioE "s[0-9][0-9]" $ct; then
-					_a=$(grep -ioE "s[0-9][0-9]" $ct|head -1|
+				if grep -qioE "s[0-9][0-9]" .ct; then
+					_a=$(grep -ioE "s[0-9][0-9]" .ct|head -1|
 					sed -e "s/[S-s]/<h3>Season /" -e 's/$/<\/h3>/')
-					_b=$(grep -ioE "s[0-9][0-9]" $ct|head -1|
+					_b=$(grep -ioE "s[0-9][0-9]" .ct|head -1|
 					sed -e 's/[S-s]/<h3>Season /' -e 's/[0-9]//' -e 's/$/<\/h3>/')
-					_c=$(grep -ioE "s[0-9][0-9]" $ct|head -1|
+					_c=$(grep -ioE "s[0-9][0-9]" .ct|head -1|
 					sed -e 's/[S-s]//' -e 's/[0-9]$//')
 					if [ "$_c" -ge 1 ]; then echo "$_a"; else echo "$_b"; fi
 				fi
-			} >> $out
+			} >> .out
 		fi
 	elif [ "$func" == 'proc' ]; then
 		c=1
@@ -113,19 +103,18 @@ add_on(){
 			if [ $c -gt 9 ]; then d="(e$c|e$c)"
 			else d="(e$c|e0$c)"
 			fi
-			if grep -qiwE ".*$d" $ct; then
-				grep -iwE ".*$d" $ct >> $ct2
+			if grep -qiwE ".*$d" .ct; then
+				grep -iwE ".*$d" .ct >> .ct2
 			else
-				if [ -e $ct2 ]; then mv $ct2 $ct;fi;break
+				if [ -e .ct2 ]; then mv .ct2 .ct;fi;break
 			fi
 			c=$((c+1))
 		done
-		if ! grep -qE "(480p|720p|1080p)" $ct; then
-				grep -iowE "$format" $ct|sed 's:.*<a:<a:' >> $out
+		if ! grep -qE "(480p|720p|1080p)" .ct; then
+				grep -iowE "$format" .ct|sed 's:.*<a:<a:' >> .out
 		else
-			cur=lf
 			parser
-			if [ -e $ct2 ]; then rm $ct2;fi
+			rm .ct2
 		fi
 	fi
 }
@@ -155,7 +144,7 @@ edit(){
 			fi
 			func='proc';add_on;;
 		480p|720p|1080p)
-			if ! grep -q "$pixel" $ct; then
+			if ! grep -q "$pixel" .ct; then
 				echo "error: cannot find $pixel";exit
 			fi
 			if [ "$h" == y ] || [ "$h" == '' ]; then
@@ -163,27 +152,26 @@ edit(){
 			else
 				header=n;func='header';add_on
 			fi
-			echo "$pixel" >> $out
-			grep -iowE ".*$pixel.*</a>" $ct|sed 's:.*<a:<a:' >> $out
+			echo "$pixel" >> .out
+			grep -iowE ".*$pixel.*</a>" .ct|sed 's:.*<a:<a:' >> .out
 	esac
-	xclip -sel clip < $out
+	xclip -sel clip < .out
 	echo -e "copied to clipboard."
-	rm $out $ct .wget
+	rm .out .ct .wget
 	edit
 }
 sort(){
-#here
 	compare(){
-		size=$(wc -l<$out)
+		size=$(wc -l<.out)
 		if [ $size -le 1 ]; then
 			empty=yes
 			b=$((b+0))
 			status=1
 		else
-			cmpr=$(grep -iwoE "s$srt" $out|head -1|sed 's:[S-s]::')
+			cmpr=$(grep -iwoE "s$srt" .out|head -1|sed 's:[S-s]::')
 			if [ "$cmpr" == "$srt" ]; then
-				cat $out >> "$_dir/s$srt"
-				truncate -s 0 $out
+				cat .out >> "$_dir/s$srt"
+				truncate -s 0 .out
 				b=$((b+0))
 				empty=no;status=0
 			else
@@ -198,7 +186,7 @@ sort(){
 		fi
 		read -erp "$pixel: " url
 		if [[ "$url" == '' ]]; then
-			if [ -e $out2 ]; then mv $out2 $out; fi
+			if [ -e .out2 ]; then mv .out2 .out; fi
 			compare;return
 		else
 			lru=$(echo "$url"|grep "http"|| echo false)
@@ -208,12 +196,12 @@ sort(){
 			else
 				header=n;func='header';add_on
 				func='proc';add_on
-				cmpr=$(grep -iwoE "s01" $out|head -1|sed 's:[S-s]::')
+				cmpr=$(grep -iwoE "s01" .out|head -1|sed 's:[S-s]::')
 				if [ "$cmpr" != "$srt" ]; then
 					echo -e ":: error:'s$srt' not found in URL."
-					truncate -s 0 $out;empty="yes";status=2
+					truncate -s 0 .out;empty="yes";status=2
 				else
-					cat $out >> $out2
+					cat .out >> .out2
 				fi
 			fi
 		fi
@@ -228,7 +216,7 @@ sort(){
 		fi
 	fi
 	a=0;b=1;d=0
-	touch $out
+	touch .out
 	esc=$(echo $esc)
 	while true;do
 		talk(){
@@ -256,40 +244,30 @@ sort(){
 			elif [ $n -ge 1 ] && [ $esc == yes ]; then
 				url=""
 			fi
-			size=$(wc -l<$out)
+			size=$(wc -l<.out)
 			case "$url" in
 				"")
 					if [ -z "$(ls -A $_dir)" ]; then
 						abort
 					else
-						
-						if [ $size == 2 ]; then #&& [ "$(wc -l<$_dir/s$srt)" -le 2 ]; then
-							abort
-						#elif [ $size -lt 2 ] && [ "$(wc -l<$_dir/s$srt)" -gt 2 ]; then
-						#	abort
-						else
-							echo '[vc_row][vc_column column_width_percent="100" align_horizontal="align_center" overlay_alpha="50" gutter_size="3" medium_width="0" mobile_width="0" shift_x="0" shift_y="0" shift_y_down="0" z_index="0" width="1/1"][vc_column_text]' > $out
-							if [ $n -ge 1 ] && [ $esc == yes ]; then
-								for file in $_dir/*;do
-									cat $file >> $out
-								done
-							else
-								cur=fl;cur=$(echo $cur)
-								for file in $_dir/*;do
-									grep -qio '.*Season.*' $file >> $out
-									parser
-								done
+						echo '[vc_row][vc_column column_width_percent="100" align_horizontal="align_center" overlay_alpha="50" gutter_size="3" medium_width="0" mobile_width="0" shift_x="0" shift_y="0" shift_y_down="0" z_index="0" width="1/1"][vc_column_text]' > .out;echo >> .out
+						for file in $_dir/*;do
+							grep -qio '.*Season.*' $file >> .out
+							if grep -qioE '480p' $file; then
+								grep -qiW '.*480p.*' $file >> .out
 							fi
-							echo -e "\\n[/vc_column_text][/vc_column][/vc_row]" >> $out
-							#xclip -sel clip < $out
-							if [ $esc == yes ]; then #echo ":: copied to clipboard."
-								rm $out;return
-							else
-								xclip -sel clip < $out
-								echo "copied to clipboard."
-								rm $out .wget;break
-								b=$((b+1))
+							if grep -qioE '720p' $file; then
+								echo >> .out
+								grep -qiW '.*720p.*' $file|grep -ivE "(x264|x265)"
 							fi
+							cat $file >> .out
+						done
+						echo -e "\\n[/vc_column_text][/vc_column][/vc_row]" >> .out
+						xclip -sel clip < .out
+						if [ $esc == yes ]; then echo ":: copied to clipboard."
+							rm .out;return
+						else echo "copied to clipboard."
+							rm .out .wget;break
 						fi
 					fi;;
 				skip|s)
@@ -325,19 +303,15 @@ sort(){
 								if [ -e $_dir/s$srt ]; then rm "$_dir/s$srt";fi;break
 							else
 								header=y;func='header';add_on
-								func='proc';add_on
+								func='proc';add_on;rm .ct
 								compare
 								if [ $status == 1 ]; then
-									echo "error: $url.";b=$((b+0))
-									#rm $ct #$ct2 $ct3
-									#cleanup;mkdir $_dir
-									truncate -s 2 $out;
-									break
+									echo "error: s$srt not found.";b=$((b+0))
 								fi
+								b=$((b+1))
 							fi
 						done
-						b=$((b+1))
-						if [ $b -gt 1 ]; then b=$((b-0));fi # else b=$((b-1));fi
+						if [ $b -gt 1 ]; then b=$((b-0)); else b=$((b-1));fi
 					else
 						lru=$(echo "$url"|grep "http"|| echo false)
 						if [ $lru == false ]; then
@@ -345,7 +319,7 @@ sort(){
 							if [ "$nd2" != "" ]; then abort;fi
 						else
 							header=y;func='header';add_on
-							func='proc';add_on;rm $ct
+							func='proc';add_on;rm .ct
 							compare
 							if [ "$nd2" != "" ]; then return;fi
 							if [ $status == 1 ]; then
@@ -363,18 +337,15 @@ sort(){
 }
 set -xe
 trap sig_abort SIGINT
-#cleanup
 if [ ! -e /usr/bin/xclip ]; then
 	echo -e "install xclip: 'sudo <your-package-manager> xclip'."
 	exit 0
 fi
 shopt -u nocasematch
-out=.out
-out2=.out2
-ct=.ct
-ct2=.ct2
-ct3=.ct3
 format='.*(webrip|avi|flv|wmv|mov|mp4|mkv|3gp|webm|m4a|m4v|f4a|f4v|m4b|m4r|f4b).*</a>'
+if [ -e .out ]; then rm .out; fi
+if [ -e .ct ]; then rm .ct*; fi
+if [ -e .wget ]; then rm .wget; fi
 case $1 in
 	"")	pixel='url';echo;edit;;
 	480p|480)	pixel="480p";echo;edit;;
