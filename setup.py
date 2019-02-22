@@ -28,7 +28,7 @@ def git():
         elif "ssh-rsa" in open('.gitOUT.txt').read():
             sys('getID=$(grep -w "id" .gitOUT.txt|sed -e "s/.* //"|sed "s/,//");name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");curl -is -u $name:$token -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X DELETE https://api.github.com/user/keys/$getID -o .gitOUT.txt || echo "\nNo internet connection"')
             createSSH()
-        sys('git clone git@github.com:looneytkp/Popcorn-Time.git; git clone git@github.com:looneytkp/scripts.git; git clone git@github.com:looneytkp/make-passwd.git; git clone git@github.com:looneytkp/julius-t.-persie.git')
+        sys('git clone git@github.com:looneytkp/Popcorn-Time.git; git clone git@github.com:looneytkp/scripts.git; git clone git@github.com:looneytkp/make-passwd.git; git clone git@github.com:looneytkp/Innovative-Guild.git; git clone git@github.com:looneytkp/url_parser.git;git clone git@github.com:looneytkp/massively.git')
         remove(".gitOUT.txt");remove('info.zip'); chdir(home)
         with open(setup, 'a') as txt:
             txt.write("git\n")
