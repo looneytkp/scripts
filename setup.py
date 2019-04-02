@@ -87,9 +87,12 @@ def cursors():
         print('Downloading & installing:')
         sys('wget -qc --show-progress -nc "https://www.dropbox.com/s/kt3m9oil3ya1pae/hacked.tgz" "https://www.dropbox.com/s/jwjtk4ay1x1k6cn/obsidian.tgz" "https://www.dropbox.com/s/4zkuwk6xsishnoc/snow.tgz" "https://www.dropbox.com/s/hb1ivyrzyv8rz9o/capitaine.tar.gz" "https://www.dropbox.com/s/fxz6ecdmq6bj21t/theDOT.tar.xz"')
 
+#peepcode.zsh-theme suvash.zsh-theme amuse.zsh-theme steeef.zsh-theme smt.zsh-theme mira.zsh-theme kiwi.zsh-theme itchy.zsh-theme pure.zsh-theme mortalscumbag.zsh-theme candy-kingdom.zsh-theme intheloop.zsh-theme trapd00r.zsh-theme refined.zsh-theme frisk.zsh-theme tjkirch.zsh-theme crcandy.zsh-theme fino-time.zsh-theme bureau.zsh-theme dst.zsh-theme frontcube.zsh-theme re5et.zsh-theme dstufft.zsh-theme blinks.zsh-theme juanghurtado.zsh-theme pmcgee.zsh-theme rgm.zsh-theme emotty.zsh-theme avit.zsh-theme 3den.zsh-theme adben.zsh-theme rixius.zsh-theme junkfood.zsh-theme josh.zsh-theme fox.zsh-theme
+
 
 
 
 text = open(setup, 'a+')
 text.close()
-sys(pacman); git(); popcorntime()
+#sys(pacman); git(); popcorntime()
+popcorntime();

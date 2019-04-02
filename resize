@@ -1,12 +1,8 @@
 #!/bin/bash
 set -e
 
-cd ~/Downloads
-if [[ ! -d converted_imgs ]];then
-	mkdir converted_imgs
-fi
 func(){
-	file=~/Downloads/.tmp.txt
+	file=.resizer.txt
 	if [[ -e $file ]]; then rm $file;fi
 	find *.jpg *.png *.jpeg 2> /dev/null|grep -vE '(_c.jpg|_c.png|_c.jpeg)'|grep -n . > $file|| printf "\\rno images to convert\\n"
 	cnt=1

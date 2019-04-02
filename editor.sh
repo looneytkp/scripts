@@ -368,7 +368,7 @@ sort(){
 	done
 	'sort'
 }
-set -xe
+set -e
 trap sig_abort SIGINT
 #cleanup
 if [ ! -e /usr/bin/xclip ]; then
