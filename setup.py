@@ -18,7 +18,7 @@ def git():
         print('git is already set up')
     else:
         if not path.exists(gitDIR):
-            mkdir(gitDIR);chdir(gitDIR)
+            mkdir(gitDIR)
         chdir(gitDIR)
         sys('name=$(unzip -P $USER$USER -pq info.zip|grep "name"|sed "s/name=//");token=$(unzip -P $USER$USER -pq info.zip|grep "token"|sed "s/token=//");git init;curl -is -u "$name:$token" -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/user/keys -o .gitOUT.txt || echo "\nNo internet connection"')
         if "Bad credentials" in open('.gitOUT.txt').read():
@@ -87,7 +87,7 @@ def cursors():
         print('Downloading & installing:')
         sys('wget -qc --show-progress -nc "https://www.dropbox.com/s/kt3m9oil3ya1pae/hacked.tgz" "https://www.dropbox.com/s/jwjtk4ay1x1k6cn/obsidian.tgz" "https://www.dropbox.com/s/4zkuwk6xsishnoc/snow.tgz" "https://www.dropbox.com/s/hb1ivyrzyv8rz9o/capitaine.tar.gz" "https://www.dropbox.com/s/fxz6ecdmq6bj21t/theDOT.tar.xz"')
 
-#peepcode.zsh-theme suvash.zsh-theme amuse.zsh-theme steeef.zsh-theme smt.zsh-theme mira.zsh-theme kiwi.zsh-theme itchy.zsh-theme pure.zsh-theme mortalscumbag.zsh-theme candy-kingdom.zsh-theme intheloop.zsh-theme trapd00r.zsh-theme refined.zsh-theme frisk.zsh-theme tjkirch.zsh-theme crcandy.zsh-theme fino-time.zsh-theme bureau.zsh-theme dst.zsh-theme frontcube.zsh-theme re5et.zsh-theme dstufft.zsh-theme blinks.zsh-theme juanghurtado.zsh-theme pmcgee.zsh-theme rgm.zsh-theme emotty.zsh-theme avit.zsh-theme 3den.zsh-theme adben.zsh-theme rixius.zsh-theme junkfood.zsh-theme josh.zsh-theme fox.zsh-theme
+#peepcode.zsh-theme suvash.zsh-theme amuse.zsh-theme steeef.zsh-theme smt.zsh-theme mira.zsh-theme kiwi.zsh-theme itchy.zsh-theme pure.zsh-theme mortalscumbag.zsh-theme candy-kingdom.zsh-theme intheloop.zsh-theme trapd00r.zsh-theme refined.zsh-theme frisk.zsh-theme tjkirch.zsh-theme crcandy.zsh-theme fino-time.zsh-theme bureau.zsh-theme dst.zsh-theme frontcube.zsh-theme re5et.zsh-theme dstufft.zsh-theme blinks.zsh-theme juanghurtado.zsh-theme pmcgee.zsh-theme rgm.zsh-theme emotty.zsh-theme avit.zsh-theme 3den.zsh-theme adben.zsh-theme rixius.zsh-theme junkfood.zsh-theme josh.zsh-theme fox.zsh-theme af-magic.zsh-theme
 
 
 

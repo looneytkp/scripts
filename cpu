@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+case $1 in
+	"")
+		sudo thermald
+		sudo cpupower frequency-set -g powersave
+		sudo cpupower frequency-set -d 1.20
+		#sudo cpupower frequency-set -u 1.60
+		#disable turbo boost
+		echo "0" | sudo tee /sys/devices/system/cpu/cpufreq/boost
+		;;
+	-f)
+		#view cpu frequency
+		watch -n.1 "cat /proc/cpuinfo | grep \"^[c]pu MHz\"";;
+	-t)
+		#view cpu temp
+		watch -n.1 "sensors|grep \"^[C]ore\"";;
+	-u)
+		if [ "$2" != '' ]; then
+			n=$2
+			case "$n" in
+				1|2|3|4)
+					#disable cpu core
+					echo 0 | sudo tee /sys/devices/system/cpu/cpu["$n"..3]/online
+#					echo 0 | sudo tee /sys/devices/system/cpu/cpu[2..3]/online
+#					echo 0 | sudo tee /sys/devices/system/cpu/cpu[3..3]/online
+#					echo 0 | sudo tee /sys/devices/system/cpu/cpu3/online
+				;;
+			esac
+		else
+			echo "nothing"
+		fi
+esac
+#enable cpu core
+#echo 1 | sudo tee /sys/devices/system/cpu/cpu1/online
+
+#available frequency steps:  2.40 GHz, 2.40 GHz, 2.27 GHz, 2.13 GHz, 2.00 GHz, 1.87 GHz, 1.73 GHz, 1.60 GHz, 1.47 GHz, 1.33 GHz, 1.20 GHz
+#available cpufreq governors: userspace powersave performance schedutil

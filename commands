@@ -1,0 +1,103 @@
+#!/bin/bash
+set -e
+
+SWAPFILE(){
+	# create swap file #
+	if ! grep -q swap ~/.setup.conf; then
+		sudo -p "password: " fallocate -l 2G /swapfile
+		sudo chmod 600 /swapfile
+		sudo mkswap /swapfile
+		sudo swapon /swapfile
+		echo "/swapfile none swap defaults 0 0"|sudo tee -a /etc/fstab > /dev/null
+		echo swap >> ~/.setup.conf
+		echo -e "2G swapfile created at /swapfile.\\nswap setup complete.\\n"
+	else
+		echo "swapfile already exists."
+	fi
+}
+
+POPCORNTIME(){
+	if ! grep -q popcorntime ~/.setup.conf; then
+		wget -qnc 'https://github.com/looneytkp/popcorntime/archive/master.zip' && unzip -oq ma*ip && yes|./Po*er/p*e && rm -rf ma*ip Po*er
+		echo popcorntime >> ~/.setup.conf
+		echo -e "popcorntime setup complete.\\n"
+	else
+		echo "popcorntime is already installed."
+	fi
+}
+
+GIT(){
+#incomplete
+	if ! grep -q git ~/.setup.conf; then
+		mkdir -p ~/git
+		wget -qc --timeout=10 --waitretry=0 --tries=4 --retry-connrefused "https://www.dropbox.com/s/if7dy5qaxhk09ad/info.zip" -O ~/Downloads || exit
+		name=$(unzip -P "$USER$USER" -pq ~/Downloads/info.zip | grep "name"|sed "s/name=//" || rm ~/Downloads/info.zip)
+		email=$(unzip -P "$USER$USER" -pq ~/Downloads/info.zip | grep "email"|sed "s/email=//")
+		token=$(unzip -P "$USER$USER" -pq ~/Downloads/info.zip | grep "token"|sed "s/token=//")
+
+		curl -is -u "$name:$token" -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://api.github.com/user/keys -o ~/Downloads/gitOUT.txt || if [ $? != 0 ]; then echo "Connection problems." && exit; fi
+		if grep "Bad credentials" ~/Downloads/gitOUT.txt; then
+			echo "Invalid token, update it." && exit
+		elif grep "ssh-rsa" ~/Downloads/gitOUT; then
+			curl -is -u $name:$token -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -X DELETE https://api.github.com/user/keys/$getID -o .gitOUT.txt || if [ $? != 0 ]; then echo "Connection problems." && exit; fi
+		fi
+
+		git config --global user.name $name
+		git config --global user.email $email
+		ssh-keygen -t rsa -b 4096 -C $email
+		$(ssh-agent -s)
+		ssh-add ~/.ssh/id_rsa
+
+		curl -s -u $name:$token -H "Accept: application/vnd.github.v3+json" -H "Content-Type: application/json" -d \'{"title": "arch", "key": "~/.ssh/id_rsa.pub" }\' -X POST https://api.github.com/user/keys -o .gitOUT.txt || if [ $? != 0 ]; then echo "Connection problems." && exit; fi
+
+		git clone git@github.com:looneytkp/Popcorn-Time.git
+		git clone git@github.com:looneytkp/scripts.git
+		git clone git@github.com:looneytkp/make-passwd.git
+		git clone git@github.com:looneytkp/Innovative-Guild.git
+		git clone git@github.com:looneytkp/url_parser.git
+		git clone git@github.com:looneytkp/massively.git
+
+		echo git >> ~/.setup.conf
+		echo -e "git setup complete\\n"
+	else
+		echo "git is already setup."
+	fi
+}
+
+ZSH(){
+	if ! grep -q zsh ~/.setup.conf; then
+		chsh -s $(which zsh)
+		sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+		wget -qc --timeout=10 --waitretry=0 --tries=4 --retry-connrefused --show-progress --no-clobber http://raw.github.com/caiogondim/bullet-train-oh-my-zsh-theme/master/bullet-train.zsh-theme https://raw.githubusercontent.com/tylerreckart/hyperzsh/master/hyperzsh.zsh-theme http://raw.github.com/zakaziko99/agnosterzak-ohmyzsh-theme/master/agnosterzak.zsh-theme -O ~/.ohmyzsh/themes/ || if [ $? != 0 ]; then echo -e "connection problems" && exit; fi
+		themes=(peepcode.zsh-theme suvash.zsh-theme amuse.zsh-theme steeef.zsh-theme smt.zsh-theme mira.zsh-theme kiwi.zsh-theme itchy.zsh-theme pure.zsh-theme mortalscumbag.zsh-theme candy-kingdom.zsh-theme intheloop.zsh-theme trapd00r.zsh-theme refined.zsh-theme frisk.zsh-theme tjkirch.zsh-theme crcandy.zsh-theme fino-time.zsh-theme bureau.zsh-theme dst.zsh-theme frontcube.zsh-theme re5et.zsh-theme dstufft.zsh-theme blinks.zsh-theme juanghurtado.zsh-theme pmcgee.zsh-theme rgm.zsh-theme emotty.zsh-theme avit.zsh-theme 3den.zsh-theme adben.zsh-theme rixius.zsh-theme junkfood.zsh-theme josh.zsh-theme fox.zsh-theme af-magic.zsh-theme)
+		for theme in ${themes[@]}
+			rm ~/.ohmyzsh/themes/$theme || true
+		done
+		git stash -A
+		sed -i 's/echo "\[oh/#echo "\[oh/' ~/.oh-my-zsh/oh-my-zsh.sh
+		sed -i 's/="robbyrussell"/="random"/' ~/.zshrc
+		{ echo 'alias update-grub="grub-mkconfig -o /boot/grub/grub.cfg"'
+		echo 'alias suspend="systemctl suspend"'
+		echo 'alias conservative="sudo cpupower frequency-set -g conservative"'
+		echo 'alias powersave="sudo cpupower frequency-set -g powersave"'
+		echo 'alias ondemand="sudo cpupower frequency-set -g ondemand"'
+		} >> ~/.bashrc ~/.zshrc
+
+		echo "zsh & ohmyzsh" >> ~/.setup.conf
+		echo "zsh setup complete\\n"
+	else
+		"zsh is already setup"
+	fi
+}
+
+touch ~/.setup.conf
+for arguments; do
+	case "$arguments" in
+		popcorntime)	POPCORNTIME;;
+		git)	GIT;;
+		swap)	SWAPFILE;;
+		all)	;;
+		*)	echo -e "\\n$arguments is invalid.\\n";;
+	esac
+done
+# end of script #
