@@ -100,4 +100,8 @@ for arguments; do
 		*)	echo -e "\\n$arguments is invalid.\\n";;
 	esac
 done
+
+#sudo pacman -S speedtest-cli; speedtest --simple
+#wget https://github.com/ddo/fast/releases/download/v0.0.4/fast_linux_amd64
+#sudo install fast_linux_amd64 /usr/local/bin/fast
 # end of script #
